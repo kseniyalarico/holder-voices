@@ -5,6 +5,12 @@ name: Trigger Holder Voices indexers
 # scheduled workflows (free for this public repo) fill the gap by hitting
 # the same /api/cron/* routes every 5 minutes — the minimum interval GitHub
 # supports for scheduled workflows.
+#
+# Each call only has ~60s (Vercel's function timeout) to work with. A large
+# catch-up (e.g. right after first deploy) can span more than that, in which
+# case the call times out — but sync progress is saved after every chunk, so
+# it just resumes next tick. `continue-on-error` keeps that expected timeout
+# from blocking the other indexer or marking the whole run as failed.
 on:
   schedule:
     - cron: "*/5 * * * *"
@@ -15,11 +21,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger NFT ownership indexer
+        continue-on-error: true
         run: |
-          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          curl -s -o /dev/null -w "nft-indexer: %{http_code}\n" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "${{ vars.APP_URL }}/api/cron/nft-indexer"
 
       - name: Trigger vote indexer
+        continue-on-error: true
         run: |
-          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          curl -s -o /dev/null -w "vote-indexer: %{http_code}\n" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "${{ vars.APP_URL }}/api/cron/vote-indexer"
