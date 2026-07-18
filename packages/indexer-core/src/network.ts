@@ -12,3 +12,15 @@ export function getPublicClient() {
     transport: http(process.env.MONAD_TESTNET_RPC_URL ?? networkConfig.rpcUrl),
   });
 }
+
+// The public RPC caps requests at 25/sec; a catch-up pass can need hundreds
+// of 100-block chunks, so throttle between them to stay well under that.
+const CHUNK_DELAY_MS = 120;
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function throttleChunk(): Promise<void> {
+  await sleep(CHUNK_DELAY_MS);
+}

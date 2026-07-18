@@ -1,6 +1,6 @@
 import { type Address, type GetLogsReturnType } from "viem";
 import { prisma } from "@holder-voices/database";
-import { CHUNK_SIZE, CONFIRMATIONS, getPublicClient } from "./network";
+import { CHUNK_SIZE, CONFIRMATIONS, getPublicClient, throttleChunk } from "./network";
 
 const TRANSFER_EVENT = {
   type: "event",
@@ -94,6 +94,7 @@ async function syncCollection(collection: CollectionRow, full: boolean) {
 
     console.log(`[${collection.name}] synced blocks ${cursor}-${chunkEnd} (${logs.length} transfers)`);
     cursor = chunkEnd + 1n;
+    if (cursor <= safeTip) await throttleChunk();
   }
 }
 

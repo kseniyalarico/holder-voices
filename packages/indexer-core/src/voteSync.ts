@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { type Address, type Log } from "viem";
 import { prisma } from "@holder-voices/database";
-import { CHUNK_SIZE, CONFIRMATIONS, getPublicClient } from "./network";
+import { CHUNK_SIZE, CONFIRMATIONS, getPublicClient, throttleChunk } from "./network";
 
 const ROOT = path.resolve(__dirname, "../../..");
 
@@ -149,5 +149,6 @@ export async function runVoteSyncPass(options: VoteSyncOptions = {}): Promise<vo
 
     console.log(`synced blocks ${cursor}-${chunkEnd} (${logs.length} events)`);
     cursor = chunkEnd + 1n;
+    if (cursor <= safeTip) await throttleChunk();
   }
 }
