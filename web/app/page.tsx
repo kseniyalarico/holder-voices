@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ConnectButton } from "@/components/ConnectButton";
-import { PollCard } from "@/components/PollCard";
+import { PollsTabs } from "@/components/PollsTabs";
 import { listPolls } from "@/lib/polls";
 
 export default async function HomePage() {
@@ -23,8 +23,7 @@ export default async function HomePage() {
         <ConnectButton />
       </header>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-muted">Active proposals</h2>
+      <div className="flex items-center justify-end">
         <Link
           href="/polls/new"
           className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition hover:border-accent"
@@ -33,25 +32,7 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      <section className="flex flex-col gap-3">
-        {active.length === 0 && (
-          <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">
-            No active proposals yet.
-          </p>
-        )}
-        {active.map((poll) => (
-          <PollCard key={poll.pollId} poll={poll} />
-        ))}
-      </section>
-
-      {completed.length > 0 && (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium text-muted">Completed proposals</h2>
-          {completed.map((poll) => (
-            <PollCard key={poll.pollId} poll={poll} />
-          ))}
-        </section>
-      )}
+      <PollsTabs active={active} completed={completed} />
     </div>
   );
 }
