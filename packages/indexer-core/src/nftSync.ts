@@ -32,15 +32,21 @@ async function resyncCollectionIfRequested(collectionId: number, full: boolean) 
 
 async function adjustBalance(collectionId: number, wallet: Address, delta: number, blockNumber: bigint) {
   const walletAddress = wallet.toLowerCase();
-  const existing = await prisma.collectionHolder.findUnique({
-    where: { collectionId_walletAddress: { collectionId, walletAddress } },
-  });
-  const newBalance = Math.max(0, (existing?.tokenBalance ?? 0) + delta);
 
+  // Atomic increment (not read-then-write) — safe under concurrent/overlapping
+  // sync passes, which a read-modify-write upsert is not.
   await prisma.collectionHolder.upsert({
     where: { collectionId_walletAddress: { collectionId, walletAddress } },
-    update: { tokenBalance: newBalance, lastUpdatedBlock: blockNumber },
-    create: { collectionId, walletAddress, tokenBalance: newBalance, lastUpdatedBlock: blockNumber },
+    update: { tokenBalance: { increment: delta }, lastUpdatedBlock: blockNumber },
+    create: { collectionId, walletAddress, tokenBalance: Math.max(0, delta), lastUpdatedBlock: blockNumber },
+  });
+
+  // Floor at 0 in a separate, still-atomic statement (increment can't express
+  // "never go below 0" in one call) — a no-op unless something processed a
+  // burn/transfer-out before its matching mint/transfer-in was ever recorded.
+  await prisma.collectionHolder.updateMany({
+    where: { collectionId, walletAddress, tokenBalance: { lt: 0 } },
+    data: { tokenBalance: 0 },
   });
 }
 

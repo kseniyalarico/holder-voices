@@ -16,6 +16,14 @@ on:
     - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
+# Never run two ticks at once — concurrent invocations were observed to
+# double-count NFT transfers (read-then-write balance updates raced across
+# overlapping calls). Queue instead of overlapping; don't cancel a run that's
+# already progressing through a catch-up.
+concurrency:
+  group: holder-voices-indexers
+  cancel-in-progress: false
+
 jobs:
   trigger-indexers:
     runs-on: ubuntu-latest
