@@ -1,0 +1,8 @@
+{
+  "_comment": "Copy to test-wallets.json (gitignored is not required — only addresses, no keys — but kept local by convention) and fill in real addresses of your 3 test wallets before running `npm run mint:test`.",
+  "wallets": [
+    { "label": "wallet1-collection-A", "address": "0x0000000000000000000000000000000000W001", "collections": ["A"] },
+    { "label": "wallet2-collection-B-and-C", "address": "0x0000000000000000000000000000000000W002", "collections": ["B", "C"] },
+    { "label": "wallet3-no-collections", "address": "0x0000000000000000000000000000000000W003", "collections": [] }
+  ]
+}

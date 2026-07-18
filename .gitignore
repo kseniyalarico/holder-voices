@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+.pnpm-debug.log*
+
+# Env
+.env
+.env.local
+.env*.local
+
+# Next.js
+web/.next/
+web/out/
+web/.turbo/
+
+# Foundry
+contracts/cache/
+contracts/out/
+# Installed via `forge install --no-git` (not submodules) — re-fetch with the
+# commands in README.md rather than committing vendored dependency source.
+contracts/lib/
+contracts/broadcast/*/*/dry-run/
+contracts/broadcast/*/*/run-*.json
+!contracts/broadcast/*/*/run-latest.json
+
+# Prisma / SQLite
+packages/database/*.db
+packages/database/*.db-journal
+packages/database/generated/
+
+# Misc
+.DS_Store
+*.log
+dist/
+build/
+
+# Claude Code local settings
+.claude/settings.local.json

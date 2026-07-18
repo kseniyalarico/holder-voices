@@ -1,0 +1,34 @@
+{
+  "name": "holder-voices",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Holder Voices — public onchain voting for NFT holders across multiple Monad communities. One proposal. Many communities.",
+  "workspaces": [
+    "web",
+    "packages/*",
+    "workers/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace web",
+    "db:migrate": "npm run db:migrate --workspace @holder-voices/database",
+    "db:reset": "npm run db:reset --workspace @holder-voices/database",
+    "indexer:nft": "npm run start --workspace @holder-voices/nft-indexer",
+    "indexer:nft:full": "npm run start:full --workspace @holder-voices/nft-indexer",
+    "indexer:votes": "npm run start --workspace @holder-voices/vote-indexer",
+    "indexer:votes:full": "npm run start:full --workspace @holder-voices/vote-indexer",
+    "deploy:test-collections": "node scripts/with-root-env.js forge script script/DeployCollections.s.sol --root contracts --rpc-url monad_testnet --broadcast --slow",
+    "deploy:testnet": "node scripts/with-root-env.js forge script script/DeployVoting.s.sol --root contracts --rpc-url monad_testnet --broadcast --slow",
+    "mint:test": "node scripts/with-root-env.js npx tsx scripts/mint-test-nfts.ts",
+    "seed:collections": "node scripts/with-root-env.js npx tsx scripts/seed-collections.ts",
+    "test:contracts": "cd contracts && forge test",
+    "test": "npm run test:contracts && npm run test --workspaces --if-present"
+  },
+  "allowScripts": {
+    "better-sqlite3@12.11.1": true,
+    "esbuild@0.28.1": true,
+    "prisma@7.8.0": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true,
+    "@prisma/engines@7.8.0": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "collectionA": {
+    "address": "0x5F71F88F314BE1268Ce2feFb0a016CD9351021f4",
+    "bitIndex": 0,
+    "name": "Holder Voices Test Collection A",
+    "startBlock": 45977812
+  },
+  "collectionB": {
+    "address": "0x70bF963340452Cf828e2AB9080F63e248afe5ed9",
+    "bitIndex": 1,
+    "name": "Holder Voices Test Collection B",
+    "startBlock": 45980535
+  },
+  "collectionC": {
+    "address": "0xf244CeA72E1975cB37967fF2D642148765E5C781",
+    "bitIndex": 2,
+    "name": "Holder Voices Test Collection C",
+    "startBlock": 45981136
+  },
+  "networkChainId": "10143"
+}

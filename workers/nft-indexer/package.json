@@ -1,0 +1,20 @@
+{
+  "name": "@holder-voices/nft-indexer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:full": "tsx src/index.ts --full"
+  },
+  "dependencies": {
+    "@holder-voices/database": "^0.1.0",
+    "@holder-voices/shared": "^0.1.0",
+    "dotenv": "^17.4.2",
+    "viem": "^2.55.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3"
+  }
+}

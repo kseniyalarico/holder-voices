@@ -1,0 +1,13 @@
+{
+  "network": "monad-testnet",
+  "chainId": 10143,
+  "currencySymbol": "MON",
+  "rpcUrl": "https://testnet-rpc.monad.xyz",
+  "wsRpcUrl": "wss://testnet-rpc.monad.xyz",
+  "explorers": {
+    "monadVision": "https://testnet.monadvision.com",
+    "monadscan": "https://testnet.monadscan.com"
+  },
+  "faucetUrl": "https://faucet.monad.xyz",
+  "confirmations": 5
+}

@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Collection {
+  id              Int      @id @default(autoincrement())
+  name            String
+  contractAddress String   @unique
+  bitIndex        Int      @unique
+  startBlock      BigInt
+  isActive        Boolean  @default(true)
+  logoUrl         String?
+
+  holders   CollectionHolder[]
+  syncState CollectionSyncState?
+
+  @@map("collections")
+}
+
+model CollectionHolder {
+  id               Int      @id @default(autoincrement())
+  collectionId     Int
+  collection       Collection @relation(fields: [collectionId], references: [id])
+  walletAddress    String
+  tokenBalance     Int
+  lastUpdatedBlock BigInt
+
+  @@unique([collectionId, walletAddress])
+  @@index([walletAddress])
+  @@map("collection_holders")
+}
+
+model CollectionSyncState {
+  collectionId    Int      @id
+  collection      Collection @relation(fields: [collectionId], references: [id])
+  lastSyncedBlock BigInt
+  lastSyncedAt    DateTime
+
+  @@map("collection_sync_state")
+}
+
+model PollMetadata {
+  // Nullable until the vote-indexer links this draft to its on-chain PollCreated event.
+  pollId         BigInt?  @unique
+  id             Int      @id @default(autoincrement())
+  metadataHash   String   @unique
+  title          String
+  question       String
+  description    String
+  createdBy      String
+  createdAt      DateTime @default(now())
+  endsAt         DateTime
+  collectionMask Int
+  txHash         String?
+
+  @@map("polls_metadata")
+}
+
+model IndexedVote {
+  id             Int      @id @default(autoincrement())
+  pollId         BigInt
+  voterAddress   String
+  choice         Int
+  collectionMask Int
+  txHash         String
+  logIndex       Int
+  blockNumber    BigInt
+  votedAt        DateTime
+
+  @@unique([pollId, voterAddress])
+  @@unique([txHash, logIndex])
+  @@index([pollId])
+  @@map("indexed_votes")
+}
+
+model VoteSyncState {
+  id              Int      @id @default(1)
+  lastSyncedBlock BigInt
+  lastSyncedAt    DateTime
+
+  @@map("vote_sync_state")
+}
+
+model EligibilityNonce {
+  nonce          String   @id
+  walletAddress  String
+  pollId         BigInt
+  collectionMask Int
+  issuedAt       DateTime @default(now())
+  expiresAt      DateTime
+  used           Boolean  @default(false)
+
+  @@index([walletAddress, pollId])
+  @@map("eligibility_nonces")
+}
