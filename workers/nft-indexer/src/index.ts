@@ -24,7 +24,9 @@ const TRANSFER_EVENT = {
 } as const;
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
-const CHUNK_SIZE = 2000n;
+// The public testnet-rpc.monad.xyz endpoint hard-caps eth_getLogs at a
+// 100-block range ("eth_getLogs is limited to a 100 range") — chunk to match.
+const CHUNK_SIZE = 100n;
 const POLL_INTERVAL_MS = 60_000;
 const CONFIRMATIONS = BigInt(networkConfig.confirmations ?? 5);
 const isFullResync = process.argv.includes("--full");

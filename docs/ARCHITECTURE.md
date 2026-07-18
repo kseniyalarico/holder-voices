@@ -84,7 +84,9 @@ than cold-starting a function every tick). Per active `Collection` row:
 2. Compute a safe tip (`latestBlock - CONFIRMATIONS`, confirmations from
    `config/testnet/network.json`) to avoid acting on blocks that could still reorg —
    Monad's async execution model means shallow reorgs are possible.
-3. Fetch `Transfer` logs in chunks (2000 blocks/call), apply balance deltas
+3. Fetch `Transfer` logs in chunks (100 blocks/call — the public
+   `testnet-rpc.monad.xyz` endpoint hard-caps `eth_getLogs` at that range),
+   apply balance deltas
    (`from`/`to` vs. the zero address covers mint/transfer/burn uniformly), advance the
    sync cursor only after each chunk commits.
 4. `--full` wipes `CollectionHolder`/`CollectionSyncState` for a from-scratch replay.
