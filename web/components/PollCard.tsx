@@ -6,20 +6,28 @@ export interface PollSummary {
   pollId: string;
   title: string;
   question: string;
+  createdAt: string;
   endsAt: string;
   isActive: boolean;
   collections: { id: number; name: string; bitIndex: number }[];
   uniqueVoters: number;
 }
 
-export function PollCard({ poll }: { poll: PollSummary }) {
+export function PollCard({ poll, isNew }: { poll: PollSummary; isNew?: boolean }) {
   return (
     <Link
       href={`/polls/${poll.pollId}`}
       className="block rounded-xl border border-border bg-surface p-5 transition hover:border-accent"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-base font-medium text-foreground">{poll.question}</h3>
+        <h3 className="flex items-center gap-2 text-base font-medium text-foreground">
+          {isNew && (
+            <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black">
+              New
+            </span>
+          )}
+          {poll.question}
+        </h3>
         <span
           className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
             poll.isActive ? "bg-success/15 text-success" : "bg-border text-muted"

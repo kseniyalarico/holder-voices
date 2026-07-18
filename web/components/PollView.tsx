@@ -6,6 +6,7 @@ import { monadTestnet } from "viem/chains";
 import { Choice, CHOICE_LABELS } from "@holder-voices/shared";
 import { holderVoicesAddress, HOLDER_VOICES_ABI } from "@/lib/contracts";
 import { explorerTxUrl, formatDateUTC, shortAddress } from "@/lib/format";
+import { markPollSeen } from "@/lib/seenPolls";
 import type { PollDetail } from "@/lib/polls";
 import { Countdown } from "./Countdown";
 import { VoteHistory } from "./VoteHistory";
@@ -48,6 +49,10 @@ export function PollView({ pollId, initialData }: { pollId: string; initialData:
       .then(setPoll)
       .catch(() => {});
   }, [address, pollId]);
+
+  useEffect(() => {
+    markPollSeen(pollId);
+  }, [pollId]);
 
   const status = computeStatus(poll, isConnected, chainId);
   const totalVotes = poll.results.yes + poll.results.no + poll.results.abstain;
