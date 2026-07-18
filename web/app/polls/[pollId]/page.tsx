@@ -4,6 +4,8 @@ import { ConnectButton } from "@/components/ConnectButton";
 import { PollView } from "@/components/PollView";
 import { getPollDetail } from "@/lib/polls";
 
+export const dynamic = "force-dynamic";
+
 export default async function PollPage({ params }: { params: Promise<{ pollId: string }> }) {
   const { pollId } = await params;
 

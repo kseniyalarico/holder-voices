@@ -3,6 +3,8 @@ import { ConnectButton } from "@/components/ConnectButton";
 import { PollsTabs } from "@/components/PollsTabs";
 import { listPolls } from "@/lib/polls";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const polls = await listPolls();
   const active = polls.filter((p) => p.isActive);
