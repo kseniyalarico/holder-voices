@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useConnection, useWriteContractSync } from "wagmi";
 import { ConnectButton } from "@/components/ConnectButton";
 import { holderVoicesAddress, HOLDER_VOICES_ABI } from "@/lib/contracts";
-import { explorerTxUrl } from "@/lib/format";
+import { durationBetween, explorerTxUrl, formatDateUTC, formatDuration } from "@/lib/format";
 
 interface CollectionOption {
   id: number;
@@ -15,6 +15,19 @@ interface CollectionOption {
 }
 
 const DESCRIPTION_MAX = 5000;
+
+const QUICK_DURATIONS = [
+  { label: "24 hours", hours: 24 },
+  { label: "2 days", hours: 48 },
+  { label: "3 days", hours: 72 },
+  { label: "7 days", hours: 168 },
+];
+
+/** `datetime-local` inputs read/write local wall-clock time, not UTC. */
+function toDatetimeLocalValue(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
 
 export default function NewPollPage() {
   const router = useRouter();
@@ -39,6 +52,10 @@ export default function NewPollPage() {
 
   function toggleCollection(id: number) {
     setSelected((prev) => (prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]));
+  }
+
+  function setQuickDuration(hours: number) {
+    setEndsAt(toDatetimeLocalValue(new Date(Date.now() + hours * 3_600_000)));
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -175,16 +192,46 @@ export default function NewPollPage() {
           />
         </label>
 
-        <label className="flex flex-col gap-1.5 text-sm">
-          Voting ends
-          <input
-            type="datetime-local"
-            value={endsAt}
-            onChange={(e) => setEndsAt(e.target.value)}
-            required
-            className="rounded-lg border border-border bg-surface px-3 py-2 text-foreground outline-none focus:border-accent"
-          />
-        </label>
+        <div className="flex flex-col gap-1.5 text-sm">
+          <label className="flex flex-col gap-1.5">
+            Voting ends
+            <input
+              type="datetime-local"
+              value={endsAt}
+              onChange={(e) => setEndsAt(e.target.value)}
+              required
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-foreground outline-none focus:border-accent"
+            />
+          </label>
+
+          <div className="flex flex-wrap gap-2">
+            {QUICK_DURATIONS.map((d) => (
+              <button
+                key={d.hours}
+                type="button"
+                onClick={() => setQuickDuration(d.hours)}
+                className="rounded-md border border-border px-2.5 py-1 text-xs text-muted transition hover:border-accent hover:text-foreground"
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+
+          {endsAt &&
+            (() => {
+              const target = new Date(endsAt);
+              if (Number.isNaN(target.getTime())) return null;
+              const duration = durationBetween(target);
+              if (duration.totalMs <= 0) {
+                return <p className="text-xs text-danger">End date must be in the future.</p>;
+              }
+              return (
+                <p className="text-xs text-muted">
+                  Ends {formatDateUTC(target)} — {formatDuration(duration)} from now
+                </p>
+              );
+            })()}
+        </div>
 
         <fieldset className="flex flex-col gap-2 text-sm">
           <legend className="mb-1">Participating collections</legend>

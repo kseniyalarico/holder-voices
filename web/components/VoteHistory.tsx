@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Choice, CHOICE_LABELS } from "@holder-voices/shared";
-import { shortAddress, explorerTxUrl } from "@/lib/format";
+import { shortAddress, explorerTxUrl, formatDateUTC } from "@/lib/format";
 
 interface VoteEntry {
   voter: string;
@@ -40,7 +40,7 @@ export function VoteHistory({ pollId }: { pollId: string }) {
             <span className="font-mono text-xs">{shortAddress(v.voter)}</span>
             <span className="text-xs text-muted">{v.collections.join(", ")}</span>
             <span className="font-medium">{CHOICE_LABELS[v.choice]}</span>
-            <span className="text-xs text-muted">{new Date(v.votedAt).toLocaleString()}</span>
+            <span className="text-xs text-muted">{formatDateUTC(v.votedAt)}</span>
             <a
               href={explorerTxUrl(v.txHash)}
               target="_blank"

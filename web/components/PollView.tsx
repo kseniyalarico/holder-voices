@@ -5,8 +5,9 @@ import { useConnection, useWriteContractSync } from "wagmi";
 import { monadTestnet } from "viem/chains";
 import { Choice, CHOICE_LABELS } from "@holder-voices/shared";
 import { holderVoicesAddress, HOLDER_VOICES_ABI } from "@/lib/contracts";
-import { explorerTxUrl, shortAddress } from "@/lib/format";
+import { explorerTxUrl, formatDateUTC, shortAddress } from "@/lib/format";
 import type { PollDetail } from "@/lib/polls";
+import { Countdown } from "./Countdown";
 import { VoteHistory } from "./VoteHistory";
 
 const CHOICES = [Choice.Yes, Choice.No, Choice.Abstain] as const;
@@ -102,8 +103,13 @@ export function PollView({ pollId, initialData }: { pollId: string; initialData:
         {poll.description && <p className="text-sm text-muted whitespace-pre-wrap">{poll.description}</p>}
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
           <span>By {shortAddress(poll.createdBy)}</span>
-          <span>Created {new Date(poll.createdAt).toLocaleString()}</span>
-          <span>Ends {new Date(poll.endsAt).toLocaleString()}</span>
+          <span>Created {formatDateUTC(poll.createdAt)}</span>
+          <span>Ends {formatDateUTC(poll.endsAt)}</span>
+          {poll.isActive && (
+            <span className="rounded-full bg-accent/15 px-2.5 py-1 font-medium text-accent-strong">
+              <Countdown endsAt={poll.endsAt} />
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {poll.collections.map((c) => (

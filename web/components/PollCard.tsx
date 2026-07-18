@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Countdown } from "./Countdown";
+import { formatDateUTC } from "@/lib/format";
 
 export interface PollSummary {
   pollId: string;
@@ -37,7 +39,15 @@ export function PollCard({ poll }: { poll: PollSummary }) {
 
       <div className="mt-4 flex items-center justify-between text-xs text-muted">
         <span>{poll.uniqueVoters} unique voter{poll.uniqueVoters === 1 ? "" : "s"}</span>
-        <span>Ends {new Date(poll.endsAt).toLocaleString()}</span>
+        <span className="flex items-center gap-2">
+          <span>Ends {formatDateUTC(poll.endsAt)}</span>
+          {poll.isActive && (
+            <>
+              <span className="text-border">·</span>
+              <Countdown endsAt={poll.endsAt} className="text-accent-strong" />
+            </>
+          )}
+        </span>
       </div>
     </Link>
   );
