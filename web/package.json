@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@holder-voices/database": "^0.1.0",
+    "@holder-voices/indexer-core": "^0.1.0",
     "@holder-voices/shared": "^0.1.0",
     "@tanstack/react-query": "^5.101.2",
     "next": "16.2.10",

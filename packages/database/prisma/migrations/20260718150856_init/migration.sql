@@ -1,50 +1,60 @@
+◇ injected env (16) from ..\..\.env // tip: ⌘ override existing { override: true }
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateTable
 CREATE TABLE "collections" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "contractAddress" TEXT NOT NULL,
     "bitIndex" INTEGER NOT NULL,
     "startBlock" BIGINT NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "logoUrl" TEXT
+    "logoUrl" TEXT,
+
+    CONSTRAINT "collections_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "collection_holders" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "collectionId" INTEGER NOT NULL,
     "walletAddress" TEXT NOT NULL,
     "tokenBalance" INTEGER NOT NULL,
     "lastUpdatedBlock" BIGINT NOT NULL,
-    CONSTRAINT "collection_holders_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "collections" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+
+    CONSTRAINT "collection_holders_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "collection_sync_state" (
-    "collectionId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "collectionId" INTEGER NOT NULL,
     "lastSyncedBlock" BIGINT NOT NULL,
-    "lastSyncedAt" DATETIME NOT NULL,
-    CONSTRAINT "collection_sync_state_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "collections" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "lastSyncedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "collection_sync_state_pkey" PRIMARY KEY ("collectionId")
 );
 
 -- CreateTable
 CREATE TABLE "polls_metadata" (
     "pollId" BIGINT,
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "metadataHash" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "question" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "createdBy" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "endsAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endsAt" TIMESTAMP(3) NOT NULL,
     "collectionMask" INTEGER NOT NULL,
-    "txHash" TEXT
+    "txHash" TEXT,
+
+    CONSTRAINT "polls_metadata_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "indexed_votes" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "pollId" BIGINT NOT NULL,
     "voterAddress" TEXT NOT NULL,
     "choice" INTEGER NOT NULL,
@@ -52,25 +62,31 @@ CREATE TABLE "indexed_votes" (
     "txHash" TEXT NOT NULL,
     "logIndex" INTEGER NOT NULL,
     "blockNumber" BIGINT NOT NULL,
-    "votedAt" DATETIME NOT NULL
+    "votedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "indexed_votes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "vote_sync_state" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT DEFAULT 1,
+    "id" INTEGER NOT NULL DEFAULT 1,
     "lastSyncedBlock" BIGINT NOT NULL,
-    "lastSyncedAt" DATETIME NOT NULL
+    "lastSyncedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "vote_sync_state_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "eligibility_nonces" (
-    "nonce" TEXT NOT NULL PRIMARY KEY,
+    "nonce" TEXT NOT NULL,
     "walletAddress" TEXT NOT NULL,
     "pollId" BIGINT NOT NULL,
     "collectionMask" INTEGER NOT NULL,
-    "issuedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expiresAt" DATETIME NOT NULL,
-    "used" BOOLEAN NOT NULL DEFAULT false
+    "issuedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+
+    CONSTRAINT "eligibility_nonces_pkey" PRIMARY KEY ("nonce")
 );
 
 -- CreateIndex
@@ -102,3 +118,10 @@ CREATE UNIQUE INDEX "indexed_votes_txHash_logIndex_key" ON "indexed_votes"("txHa
 
 -- CreateIndex
 CREATE INDEX "eligibility_nonces_walletAddress_pollId_idx" ON "eligibility_nonces"("walletAddress", "pollId");
+
+-- AddForeignKey
+ALTER TABLE "collection_holders" ADD CONSTRAINT "collection_holders_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "collections"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "collection_sync_state" ADD CONSTRAINT "collection_sync_state_collectionId_fkey" FOREIGN KEY ("collectionId") REFERENCES "collections"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+

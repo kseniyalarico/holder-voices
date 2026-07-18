@@ -8,9 +8,8 @@
   },
   "dependencies": {
     "@holder-voices/database": "^0.1.0",
-    "@holder-voices/shared": "^0.1.0",
-    "dotenv": "^17.4.2",
-    "viem": "^2.55.2"
+    "@holder-voices/indexer-core": "^0.1.0",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",

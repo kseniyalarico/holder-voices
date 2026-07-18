@@ -107,12 +107,27 @@ Same polling shape, single contract, two event types fetched together
 
 ### Database (`packages/database`)
 
-Prisma 7 + SQLite via `@prisma/adapter-better-sqlite3` (Prisma 7 removed inline
-`datasource.url` from `schema.prisma` — the connection string now lives in
-`prisma.config.ts` for the CLI, and is passed to the adapter explicitly at runtime).
-Tables: `collections`, `collection_holders`, `collection_sync_state`, `polls_metadata`,
-`indexed_votes`, `vote_sync_state`, `eligibility_nonces` — see `prisma/schema.prisma`
-for exact fields and constraints.
+Prisma 7 + Postgres (Prisma 7 removed inline `datasource.url` from `schema.prisma` —
+the connection string now lives in `prisma.config.ts` for the CLI and is read from
+`process.env.DATABASE_URL` at runtime; Postgres needs no driver adapter, unlike
+SQLite). One database serves both local dev and the hosted deployment — typically a
+Neon Postgres instance provisioned via Vercel's Storage tab. Tables: `collections`,
+`collection_holders`, `collection_sync_state`, `polls_metadata`, `indexed_votes`,
+`vote_sync_state`, `eligibility_nonces` — see `prisma/schema.prisma` for exact fields
+and constraints.
+
+### Indexer core (`packages/indexer-core`)
+
+`runNftSyncPass()` and `runVoteSyncPass()` each do exactly one pass and are shared
+between two schedulers:
+
+- **Local dev**: `workers/nft-indexer` and `workers/vote-indexer` are thin CLIs that
+  call the pass in an infinite loop with a 60s sleep (`npm run indexer:nft` /
+  `indexer:votes`), or once with `-- --full`.
+- **Hosted**: `web/app/api/cron/nft-indexer` and `.../vote-indexer` call the same pass
+  once per HTTP request, protected by a `CRON_SECRET` bearer token. A GitHub Actions
+  workflow (`.github/workflows/indexers.yml`) hits both routes every 5 minutes, since
+  Vercel's free Hobby plan only allows native cron jobs once per day.
 
 ## Full data flow: wallet connect → vote → stats
 

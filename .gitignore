@@ -34,5 +34,5 @@ packages/database/generated/
 dist/
 build/
 
-# Claude Code local settings
-.claude/settings.local.json
+# Claude Code local settings/state
+.claude/

@@ -1,0 +1,25 @@
+name: Trigger Holder Voices indexers
+
+# Vercel's free Hobby plan only allows cron jobs once per day, which is far
+# too infrequent for near-real-time NFT/vote indexing. GitHub Actions'
+# scheduled workflows (free for this public repo) fill the gap by hitting
+# the same /api/cron/* routes every 5 minutes — the minimum interval GitHub
+# supports for scheduled workflows.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  trigger-indexers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger NFT ownership indexer
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ vars.APP_URL }}/api/cron/nft-indexer"
+
+      - name: Trigger vote indexer
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ vars.APP_URL }}/api/cron/vote-indexer"

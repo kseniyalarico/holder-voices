@@ -1,0 +1,12 @@
+{
+  "name": "@holder-voices/indexer-core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@holder-voices/database": "^0.1.0",
+    "@holder-voices/shared": "^0.1.0",
+    "viem": "^2.55.2"
+  }
+}
