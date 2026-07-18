@@ -12,11 +12,11 @@ dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 import { prisma } from "@holder-voices/database";
 import { runNftSyncPass } from "@holder-voices/indexer-core";
 
-const POLL_INTERVAL_MS = 60_000;
+const POLL_INTERVAL_MS = 10_000;
 const isFullResync = process.argv.includes("--full");
 
 async function main() {
-  console.log(`nft-indexer starting${isFullResync ? " (--full resync)" : " (polling every 60s)"}...`);
+  console.log(`nft-indexer starting${isFullResync ? " (--full resync)" : " (polling every 10s)"}...`);
   for (;;) {
     await runNftSyncPass({ full: isFullResync });
     if (isFullResync) {
