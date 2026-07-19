@@ -17,7 +17,7 @@ export function ConnectButton() {
         type="button"
         onClick={() => connector && connect({ connector })}
         disabled={connecting || !connector}
-        className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-black transition hover:bg-accent-strong disabled:opacity-50"
+        className="rounded-full bg-success px-4 py-2 text-xs font-bold uppercase tracking-wide text-black transition hover:brightness-110 disabled:opacity-50"
       >
         {connecting ? "Connecting…" : "Connect Wallet"}
       </button>

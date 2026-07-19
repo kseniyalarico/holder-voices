@@ -71,33 +71,33 @@ export function PollsTabs({ active, completed }: { active: PollSummary[]; comple
   const polls = tab === "active" ? activePolls : completedPolls;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-lg border border-border bg-surface p-1 text-sm">
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-surface-2 pb-2">
+        <div className="flex gap-4">
           <button
             type="button"
             onClick={() => setTab("active")}
-            className={`flex-1 rounded-md px-3 py-1.5 transition ${
-              tab === "active" ? "bg-accent text-black font-medium" : "text-muted hover:text-foreground"
+            className={`-mb-[10px] border-b-4 pb-2 text-2xl font-extrabold uppercase transition ${
+              tab === "active" ? "border-success text-success" : "border-transparent text-muted hover:text-accent-strong"
             }`}
           >
-            Active ({activePolls.length})
+            Active
           </button>
           <button
             type="button"
             onClick={() => setTab("completed")}
-            className={`flex-1 rounded-md px-3 py-1.5 transition ${
-              tab === "completed" ? "bg-accent text-black font-medium" : "text-muted hover:text-foreground"
+            className={`-mb-[10px] border-b-4 pb-2 text-2xl font-extrabold uppercase transition ${
+              tab === "completed" ? "border-success text-success" : "border-transparent text-muted hover:text-accent-strong"
             }`}
           >
-            Completed ({completedPolls.length})
+            Completed
           </button>
         </div>
 
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as SortKey)}
-          className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs text-muted outline-none focus:border-accent"
+          className="rounded-md border border-border bg-surface px-2.5 py-1.5 text-xs text-muted outline-none focus:border-success"
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -107,14 +107,14 @@ export function PollsTabs({ active, completed }: { active: PollSummary[]; comple
         </select>
       </div>
 
-      <section className="flex flex-col gap-3">
+      <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {polls.length === 0 && (
-          <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted">
+          <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted md:col-span-2 lg:col-span-3">
             {tab === "active" ? "No active proposals yet." : "No completed proposals yet."}
           </p>
         )}
-        {polls.map((poll) => (
-          <PollCard key={poll.pollId} poll={poll} isNew={!seenIds.has(poll.pollId)} />
+        {polls.map((poll, i) => (
+          <PollCard key={poll.pollId} poll={poll} isNew={!seenIds.has(poll.pollId)} featured={i === 0} />
         ))}
       </section>
     </div>

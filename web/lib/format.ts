@@ -35,6 +35,18 @@ export function formatDuration(d: Duration): string {
   return parts.join(" ");
 }
 
+/** Short relative time ("2 mins ago", "3h ago") for feeds — not for absolute timestamps. */
+export function timeAgo(iso: string, from: number = Date.now()): string {
+  const ms = from - new Date(iso).getTime();
+  const minutes = Math.floor(ms / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min${minutes === 1 ? "" : "s"} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 const EXPLORER_BASE = process.env.NEXT_PUBLIC_MONADVISION_URL ?? "https://testnet.monadvision.com";
 
 export function explorerTxUrl(txHash: string): string {

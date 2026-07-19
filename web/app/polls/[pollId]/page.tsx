@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ConnectButton } from "@/components/ConnectButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { NavBar } from "@/components/NavBar";
+import { Footer } from "@/components/Footer";
 import { PollView } from "@/components/PollView";
 import { getPollDetail } from "@/lib/polls";
 
@@ -21,17 +20,12 @@ export default async function PollPage({ params }: { params: Promise<{ pollId: s
   if (!poll) notFound();
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-6 py-10">
-      <header className="flex items-center justify-between">
-        <Link href="/" className="text-sm text-muted hover:text-foreground">
-          ← Holder Voices
-        </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <ConnectButton />
-        </div>
-      </header>
-      <PollView pollId={pollId} initialData={poll} />
+    <div className="relative flex min-h-screen flex-1 flex-col overflow-x-hidden bg-background">
+      <NavBar />
+      <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+        <PollView pollId={pollId} initialData={poll} />
+      </div>
+      <Footer />
     </div>
   );
 }

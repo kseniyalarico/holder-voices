@@ -16,7 +16,13 @@ export async function listPolls() {
 
   return Promise.all(
     polls.map(async (poll) => {
-      const uniqueVoters = await prisma.indexedVote.count({ where: { pollId: poll.pollId! } });
+      const votes = await prisma.indexedVote.findMany({ where: { pollId: poll.pollId! }, select: { choice: true } });
+      const results = { yes: 0, no: 0, abstain: 0 };
+      for (const v of votes) {
+        if (v.choice === 0) results.yes += 1;
+        else if (v.choice === 1) results.no += 1;
+        else results.abstain += 1;
+      }
       const targetCollections = bitsInMask(poll.collectionMask)
         .map((bit) => collectionByBit.get(bit))
         .filter((c): c is NonNullable<typeof c> => Boolean(c))
@@ -31,7 +37,8 @@ export async function listPolls() {
         endsAt: poll.endsAt.toISOString(),
         isActive: poll.endsAt.getTime() > Date.now(),
         collections: targetCollections,
-        uniqueVoters,
+        uniqueVoters: votes.length,
+        results,
       };
     })
   );
