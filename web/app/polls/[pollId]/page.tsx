@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ConnectButton } from "@/components/ConnectButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { PollView } from "@/components/PollView";
 import { getPollDetail } from "@/lib/polls";
 
@@ -25,7 +26,10 @@ export default async function PollPage({ params }: { params: Promise<{ pollId: s
         <Link href="/" className="text-sm text-muted hover:text-foreground">
           ← Holder Voices
         </Link>
-        <ConnectButton />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <ConnectButton />
+        </div>
       </header>
       <PollView pollId={pollId} initialData={poll} />
     </div>

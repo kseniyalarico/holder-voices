@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ConnectButton } from "@/components/ConnectButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { PollsTabs } from "@/components/PollsTabs";
 import { listPolls } from "@/lib/polls";
 
@@ -22,7 +23,10 @@ export default async function HomePage() {
             once, and it counts toward every community you hold.
           </p>
         </div>
-        <ConnectButton />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <ConnectButton />
+        </div>
       </header>
 
       <div className="flex items-center justify-end">
